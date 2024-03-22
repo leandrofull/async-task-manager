@@ -1,0 +1,18 @@
+{
+    "name": "leandrofull/async-task-manager",
+    "description": "A PHP library to create tasks to be executed later",
+    "type": "library",
+    "license": "BSD",
+    "autoload": {
+        "psr-4": {
+            "LeandroFull\\AsyncTaskManager\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Leandro Martins Silva",
+            "email": "leandromsilva2209@gmail.com"
+        }
+    ],
+    "require": {}
+}
