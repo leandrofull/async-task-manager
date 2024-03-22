@@ -37,7 +37,7 @@ class Task
     public function addAction(object $object, array ...$methodsAndArgs): void
     {
         $this->actions[] =
-            self::$taskManager->constroyAndGetActionToTask($object, ...$methodsAndArgs);
+            self::$taskManager->constroyAndReturnATaskAction($object, ...$methodsAndArgs);
     }
 
     public function create(): void

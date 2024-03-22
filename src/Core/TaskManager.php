@@ -13,9 +13,9 @@ final class TaskManager extends AbstractTaskManager
             $object = unserialize($action["object"]);
             foreach ($action["methods_and_args"] as $methodAndArgs) {
                 foreach ($methodAndArgs["args"] as $argKey => $arg) {
-                    if (gettype($arg) === 'string' && str_starts_with($arg, 'OBJECT_TYPE: ')) {
+                    if (gettype($arg) === 'string' && str_starts_with($arg, '@#OBJECT#@')) {
                         $methodAndArgs["args"][$argKey] = 
-                            unserialize(str_replace('OBJECT_TYPE: ', '', $arg));
+                            unserialize(str_replace('@#OBJECT#@', '', $arg));
                     }
                 }
                 $object->{$methodAndArgs["method"]}(...$methodAndArgs["args"]);
@@ -33,7 +33,7 @@ final class TaskManager extends AbstractTaskManager
         return base64_encode($task->getPriority() . '_' . rand(1000, 1000000000) . '_' .time());
     }
 
-    public function constroyAndGetActionToTask(object $object, array ...$methodsAndArgs): array
+    public function constroyAndReturnATaskAction(object $object, array ...$methodsAndArgs): array
     {
         if (count($methodsAndArgs) === 0)
             throw new TaskManagerException("No action was declared!");
@@ -55,7 +55,7 @@ final class TaskManager extends AbstractTaskManager
 
             foreach ($args as $argKey => $arg) {
                 if (gettype($arg) === 'object')
-                    $arg = "OBJECT_TYPE: ".serialize($arg);
+                    $arg = "@#OBJECT#@".serialize($arg);
 
                 $args[$argKey] = $arg;
             }
@@ -120,13 +120,12 @@ final class TaskManager extends AbstractTaskManager
         }
     }
 
-    public function getTaskById(string $id): Task
+    public function getTaskById(string $id): Task|false
     {
         $taskPriority = explode('_', $this->taskIdDecode($id))[0];
         $taskFilePath = $_ENV['TASKS_PATH'] . '/' . $taskPriority . '/' . $id;
 
-        if (!file_exists($taskFilePath))
-            throw new TaskManagerException('No unfinished tasks were created with the specified ID!');
+        if (!file_exists($taskFilePath)) return false;
 
         $taskFileContent = json_decode(base64_decode(file_get_contents($taskFilePath)), true);
         $reflection = new \ReflectionClass(Task::class);
@@ -136,7 +135,7 @@ final class TaskManager extends AbstractTaskManager
         $reflection->getProperty('priority')->setValue($task, $taskFileContent["priority"]);
         $reflection->getProperty('progress')->setValue($task, $taskFileContent["progress"]);
         $reflection->getProperty('actions')->setValue($task, $taskFileContent["actions"]);
-        $reflection->getProperty('taskManager')->setValue($task, $this);
+        $reflection->getProperty('taskManager')->setValue($this);
         return $task;
     }
 }

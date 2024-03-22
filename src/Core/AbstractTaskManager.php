@@ -26,11 +26,11 @@ abstract class AbstractTaskManager
 
     abstract public function taskIdEncode(Task $task): string;
 
-    abstract public function constroyAndGetActionToTask(object $object, array ...$methodsAndArgs): array;
+    abstract public function constroyAndReturnATaskAction(object $object, array ...$methodsAndArgs): array;
 
     abstract public function createTask(Task $task): void;
 
     abstract public function runTasks(): void;
 
-    abstract public function getTaskById(string $id): Task;
+    abstract public function getTaskById(string $id): Task|false;
 }
