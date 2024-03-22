@@ -95,6 +95,19 @@ final class TaskManager extends AbstractTaskManager
         file_put_contents($filePath  . '/' . $fileName, $fileContent);
     }
 
+    public function removeTask(Task $task): void
+    {
+        $taskPath = $_ENV['TASKS_PATH'] . '/'. $task->getPriority();
+
+        if (!file_exists($taskPath)) {
+            throw new TaskManagerException(
+                "The specified task has not been created or has already been removed!"
+            );
+        }
+
+        unlink($taskPath);
+    }
+
     public function runTasks(): void
     {
         for ($i=1;$i<=10;$i++) {
@@ -111,9 +124,7 @@ final class TaskManager extends AbstractTaskManager
 
                 try {
                     $this->runTask($taskFileContent["actions"]);
-                    unlink($taskFilePath);
                 } catch(\Throwable $e) {
-                    unlink($taskFilePath);
                     echo $e->getMessage() . PHP_EOL;
                 }
             }

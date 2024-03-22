@@ -45,6 +45,11 @@ class Task
         self::$taskManager->createTask($this);
     }
 
+    public function remove(): void
+    {
+        self::$taskManager->removeTask($this);
+    }
+
     public function getId(): string
     {
         return $this->id;
