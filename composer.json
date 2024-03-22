@@ -2,7 +2,7 @@
     "name": "leandrofull/async-task-manager",
     "description": "A PHP library to create tasks to be executed later",
     "type": "library",
-    "license": "BSD",
+    "license": "proprietary",
     "autoload": {
         "psr-4": {
             "LeandroFull\\AsyncTaskManager\\": "src/"
