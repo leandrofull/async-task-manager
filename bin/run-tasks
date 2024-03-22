@@ -2,7 +2,7 @@
 
 set_time_limit(0);
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once $_composer_autoload_path ?? __DIR__ . '/../vendor/autoload.php';
 
 $taskManager = (require __DIR__ . '/../config/task_manager.php')::getInstance();
 

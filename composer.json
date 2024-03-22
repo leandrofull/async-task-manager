@@ -14,5 +14,6 @@
             "email": "leandromsilva2209@gmail.com"
         }
     ],
+    "bin": [ "bin/run-tasks" ],
     "require": {}
 }
