@@ -13,8 +13,6 @@ class Task
 
     private int $priority;
 
-    private int $progress = 0;
-
     private array $actions = [];
 
     private static AbstractTaskManager $taskManager;
@@ -22,11 +20,13 @@ class Task
     public function __construct(string $name, int $priority)
     {
         $this->name = trim($name);
+        $this->priority = $priority;
+
+        if (empty($this->name))
+            throw new TaskException('The task name cannot be empty');
         
         if ($priority < 1 || $priority > 10)
             throw new TaskException("Invalid priority level!");
-
-        $this->priority = $priority;
 
         if (!isset(self::$taskManager))
             self::$taskManager = AbstractTaskManager::getInstance();
@@ -34,10 +34,9 @@ class Task
         $this->id = self::$taskManager->taskIdEncode($this);
     }
 
-    public function addAction(object $object, array ...$methodsAndArgs): void
+    public function addAction(object $object, string $method, mixed ...$args): void
     {
-        $this->actions[] =
-            self::$taskManager->constroyAndReturnATaskAction($object, ...$methodsAndArgs);
+        $this->actions[] = new TaskAction($object, $method, ...$args);
     }
 
     public function create(): void
@@ -63,11 +62,6 @@ class Task
     public function getPriority(): int
     {
         return $this->priority;
-    }
-
-    public function getProgress(): int
-    {
-        return $this->progress;
     }
 
     public function getActions(): array
