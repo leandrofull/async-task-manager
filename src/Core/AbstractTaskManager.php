@@ -26,8 +26,6 @@ abstract class AbstractTaskManager
 
     abstract public function taskIdEncode(Task $task): string;
 
-    abstract public function constroyAndReturnATaskAction(object $object, array ...$methodsAndArgs): array;
-
     abstract public function createTask(Task $task): void;
 
     abstract public function removeTask(Task $task): void;

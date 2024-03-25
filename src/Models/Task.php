@@ -34,9 +34,14 @@ class Task
         $this->id = self::$taskManager->taskIdEncode($this);
     }
 
-    public function addAction(object $object, string $method, mixed ...$args): void
+    public function addAction(TaskAction $taskAction): void
     {
-        $this->actions[] = new TaskAction($object, $method, ...$args);
+        $this->actions[] = $taskAction;
+    }
+
+    public function resetActions(): void
+    {
+        $this->actions = [];
     }
 
     public function create(): void

@@ -41,12 +41,42 @@ class TaskAction
             $this->object->{$this->method}(...$this->args);
             $this->executed = true;
         } catch(\Throwable $e) {
-            $this->errorMsg .= $e->getMessage() . PHP_EOL;
+            $this->errorMsg .= "[ERROR!] " . $e->getMessage() . PHP_EOL;
 
             if ($e::class === "ArgumentCountError" || $e::class === "TypeError" || $this->attempts > 2) {
                 $this->error = true;
                 $this->executed = true;
             }
         }
+    }
+
+    public function getObject(): object
+    {
+        return $this->object;
+    }
+
+    public function getMethodName(): string
+    {
+        return $this->method;
+    }
+
+    public function getArgs(): array
+    {
+        return $this->args;
+    }
+
+    public function wasExecuted(): bool
+    {
+        return $this->executed;
+    }
+
+    public function hadError(): bool
+    {
+        return $this->error;
+    }
+
+    public function getErrorMessage(): string
+    {
+        return $this->errorMsg;
     }
 }
