@@ -14,11 +14,11 @@ class TaskAction
 
     private bool $executed = false;
 
-    private int $attempts = 0;
-
     private bool $error = false;
 
-    private string $errorMsg = '';
+    private int $attempts = 0;
+
+    private string $errorMessage;
 
     public function __construct(object $object, string $method, mixed ...$args)
     {
@@ -41,28 +41,12 @@ class TaskAction
             $this->object->{$this->method}(...$this->args);
             $this->executed = true;
         } catch(\Throwable $e) {
-            $this->errorMsg .= "[ERROR!] " . $e->getMessage() . PHP_EOL;
-
             if ($e::class === "ArgumentCountError" || $e::class === "TypeError" || $this->attempts > 2) {
-                $this->error = true;
+                $this->errorMessage = $e->getMessage();
                 $this->executed = true;
+                $this->error = true;
             }
         }
-    }
-
-    public function getObject(): object
-    {
-        return $this->object;
-    }
-
-    public function getMethodName(): string
-    {
-        return $this->method;
-    }
-
-    public function getArgs(): array
-    {
-        return $this->args;
     }
 
     public function wasExecuted(): bool
@@ -77,6 +61,6 @@ class TaskAction
 
     public function getErrorMessage(): string
     {
-        return $this->errorMsg;
+        return $this->errorMessage;
     }
 }

@@ -70,22 +70,34 @@ final class TaskManager extends AbstractTaskManager
                 $taskFilePath = $tasksPath . '/' . $taskFileName;
                 $task = unserialize(base64_decode(file_get_contents($taskFilePath)));
                 $actions = $task->getActions();
+                $actionsCount = count($actions);
                 $task->resetActions();
 
-                foreach ($actions as $action) {
+                $log = "[INFO] Retrieving task '{$task->getName()}'..." . PHP_EOL;
+
+                foreach ($actions as $actionIdx => $action) {
+                    $log .= 
+                        "[INFO] Trying to execute " . $actionIdx+1 .
+                        " of {$actionsCount} actions..." . PHP_EOL;
+
                     $action->execute();
 
-                    if ($action->hadError()) {                   
-                        file_put_contents(
-                            $_ENV['TASKS_PATH'] . '/' . 'errors',
-                            $action->getErrorMessage(),
-                            FILE_APPEND
-                        );
-
-                        continue;
+                    if ($action->wasExecuted()) {
+                        if (!$action->hadError()) {
+                            $log .= "[SUCCESS] Action was executed successfully." . PHP_EOL;
+                        } else {
+                            $log .= 
+                                "[ERROR] Action cannot be executed. Reason: " . 
+                                $action->getErrorMessage() . PHP_EOL;
+                        }
+                    } else {
+                        $log .= "[ERROR] Failed! Action stored for retry." . PHP_EOL;
+                        $task->addAction($action);
                     }
 
-                    $task->addAction($action);
+                    file_put_contents($_ENV['TASKS_PATH'] . '/' . '.log', $log, FILE_APPEND);
+
+                    $log = '';
                 }
 
                 if (count($task->getActions()) < 1) {
