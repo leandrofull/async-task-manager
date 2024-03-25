@@ -1,0 +1,13 @@
+<?php
+
+set_time_limit(0);
+
+require_once $_composer_autoload_path ?? __DIR__ . '/../vendor/autoload.php';
+
+$taskManager = (require __DIR__ . '/../config/task_manager.php')::getInstance();
+
+echo 'Running...' . PHP_EOL;
+
+$taskManager->deleteLogFile();
+
+echo 'Finished';

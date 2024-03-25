@@ -55,6 +55,24 @@ final class TaskManager extends AbstractTaskManager
         unlink($taskPath);
     }
 
+    public function removeAllTasks(): void
+    {
+        for ($i=1;$i<=10;$i++) {
+            $tasksPath = $_ENV['TASKS_PATH'] . '/' . $i;
+
+            if (!is_dir($tasksPath)) continue;
+
+            $tasksDir = dir($tasksPath);
+
+            while ($taskFileName = $tasksDir->read()) {
+                if ($taskFileName === '.' || $taskFileName === '..') continue;
+                unlink($tasksPath . '/' . $taskFileName);
+            }
+
+            $tasksDir->close();
+        }
+    }
+
     public function runTasks(): void
     {
         for ($i=1;$i<=10;$i++) {
@@ -120,5 +138,11 @@ final class TaskManager extends AbstractTaskManager
         if (!file_exists($taskFilePath)) return false;
 
         return unserialize(base64_decode(file_get_contents($taskFilePath)));
+    }
+
+    public function deleteLogFile(): void
+    {
+        $logFilePath = $_ENV['TASKS_PATH'] . '/' . '.log';
+        if (file_exists($logFilePath)) unlink($logFilePath);
     }
 }

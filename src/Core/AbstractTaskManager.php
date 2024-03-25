@@ -30,6 +30,8 @@ abstract class AbstractTaskManager
 
     abstract public function removeTask(Task $task): void;
 
+    abstract public function removeAllTasks(): void;
+
     abstract public function runTasks(): void;
 
     abstract public function getTaskById(string $id): Task|false;
