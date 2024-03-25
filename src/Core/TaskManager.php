@@ -44,7 +44,7 @@ final class TaskManager extends AbstractTaskManager
 
     public function removeTask(Task $task): void
     {
-        $taskPath = $_ENV['TASKS_PATH'] . '/'. $task->getPriority();
+        $taskPath = $_ENV['TASKS_PATH'] . '/'. $task->getPriority() . '/' . $task->getId();
 
         if (!file_exists($taskPath)) {
             throw new TaskManagerException(
