@@ -49,6 +49,21 @@ class TaskAction
         }
     }
 
+    public function getObject(): object
+    {
+        return $this->object;
+    }
+
+    public function getMethodName(): string
+    {
+        return $this->method;
+    }
+
+    public function getArgs(): array
+    {
+        return $this->args;
+    }
+
     public function wasExecuted(): bool
     {
         return $this->executed;
