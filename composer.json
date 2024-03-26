@@ -1,6 +1,6 @@
 {
     "name": "leandrofull/async-task-manager",
-    "description": "A PHP library to create tasks to be executed later",
+    "description": "Create tasks to be executed later",
     "type": "library",
     "license": "proprietary",
     "autoload": {
