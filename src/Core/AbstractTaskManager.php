@@ -10,8 +10,11 @@ abstract class AbstractTaskManager
 
     private final function __construct()
     {
-        if (!isset($_ENV['TASKS_PATH']))
+        if (!isset($_ENV['TASKS_PATH'])) {
             $_ENV['TASKS_PATH'] = require __DIR__ . '/../../config/tasks_path.php';
+            $_ENV['ON_TASK_ACTION_EXECUTE'] = require __DIR__ . '/../../config/on_task_action_execute.php';
+            $_ENV['ON_TASK_FINISH'] = require __DIR__ . '/../../config/on_task_finish.php';
+        }
     }
 
     protected final function __clone() {}

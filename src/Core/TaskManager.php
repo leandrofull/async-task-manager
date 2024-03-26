@@ -108,6 +108,8 @@ final class TaskManager extends AbstractTaskManager
                                 "[ERROR] Action cannot be executed. Reason: " . 
                                 $action->getErrorMessage() . PHP_EOL;
                         }
+
+                        $_ENV['ON_TASK_ACTION_EXECUTE']($task->getId(), $action);
                     } else {
                         $log .= "[ERROR] Failed! Action stored for retry." . PHP_EOL;
                         $task->addAction($action);
@@ -119,6 +121,7 @@ final class TaskManager extends AbstractTaskManager
                 }
 
                 if (count($task->getActions()) < 1) {
+                    $_ENV['ON_TASK_FINISH']($task->getId(), $actions);
                     unlink($taskFilePath);
                     continue;
                 }
