@@ -2,7 +2,6 @@
 
 namespace LeandroFull\AsyncTaskManager\Core;
 
-use LeandroFull\AsyncTaskManager\Exceptions\TaskManagerException;
 use LeandroFull\AsyncTaskManager\Models\Task;
 
 final class TaskManager extends AbstractTaskManager
@@ -22,19 +21,19 @@ final class TaskManager extends AbstractTaskManager
         $fileContent = null;
 
          if (count($task->getActions()) === 0)
-            throw new TaskManagerException("No action was declared!");
+            throw new \DomainException("No action was declared!");
 
         try {
             $fileContent = base64_encode(serialize($task));
         } catch(\Exception) {
-            throw new TaskManagerException(
+            throw new \InvalidArgumentException(
                 'A serious error made it impossible to create the task. '.
                 'It is likely that one of the objects inserted in the task has '.
                 'properties with values ​​like \'Closure\'.
             ');
         }
 
-        $filePath = $_ENV['TASKS_PATH'] . '/'. $task->getPriority();
+        $filePath = $_ENV['TASK_MANAGER']['TASKS_PATH'] . '/'. $task->getPriority();
 
         if (!is_dir($filePath))
             mkdir($filePath, 0777, true);
@@ -44,10 +43,10 @@ final class TaskManager extends AbstractTaskManager
 
     public function removeTask(Task $task): void
     {
-        $taskPath = $_ENV['TASKS_PATH'] . '/'. $task->getPriority() . '/' . $task->getId();
+        $taskPath = $_ENV['TASK_MANAGER']['TASKS_PATH'] . '/'. $task->getPriority() . '/' . $task->getId();
 
         if (!file_exists($taskPath)) {
-            throw new TaskManagerException(
+            throw new \DomainException(
                 "The specified task has not been created or has already been removed!"
             );
         }
@@ -58,7 +57,7 @@ final class TaskManager extends AbstractTaskManager
     public function removeAllTasks(): void
     {
         for ($i=1;$i<=10;$i++) {
-            $tasksPath = $_ENV['TASKS_PATH'] . '/' . $i;
+            $tasksPath = $_ENV['TASK_MANAGER']['TASKS_PATH'] . '/' . $i;
 
             if (!is_dir($tasksPath)) continue;
 
@@ -75,8 +74,10 @@ final class TaskManager extends AbstractTaskManager
 
     public function runTasks(): void
     {
+        $eventListeners = $_ENV['TASK_MANAGER']['EVENT_LISTENERS'];
+
         for ($i=1;$i<=10;$i++) {
-            $tasksPath = $_ENV['TASKS_PATH'] . '/' . $i;
+            $tasksPath = $_ENV['TASK_MANAGER']['TASKS_PATH'] . '/' . $i;
 
             if (!is_dir($tasksPath)) continue;
 
@@ -109,19 +110,19 @@ final class TaskManager extends AbstractTaskManager
                                 $action->getErrorMessage() . PHP_EOL;
                         }
 
-                        $_ENV['ON_TASK_ACTION_EXECUTE']($task->getId(), $action);
+                        $eventListeners['ON_ACTION_EXECUTE']($task->getId(), $action);
                     } else {
                         $log .= "[ERROR] Failed! Action stored for retry." . PHP_EOL;
                         $task->addAction($action);
                     }
 
-                    file_put_contents($_ENV['TASKS_PATH'] . '/' . '.log', $log, FILE_APPEND);
+                    file_put_contents($_ENV['TASK_MANAGER']['TASKS_PATH'] . '/.log', $log, FILE_APPEND);
 
                     $log = '';
                 }
 
                 if (count($task->getActions()) < 1) {
-                    $_ENV['ON_TASK_FINISH']($task->getId(), $actions);
+                    $eventListeners['ON_TASK_FINISH']($task->getId(), $actions);
                     unlink($taskFilePath);
                     continue;
                 }
@@ -136,7 +137,7 @@ final class TaskManager extends AbstractTaskManager
     public function getTaskById(string $id): Task|false
     {
         $taskPriority = explode('_', $this->taskIdDecode($id))[0];
-        $taskFilePath = $_ENV['TASKS_PATH'] . '/' . $taskPriority . '/' . $id;
+        $taskFilePath = $_ENV['TASK_MANAGER']['TASKS_PATH'] . '/' . $taskPriority . '/' . $id;
 
         if (!file_exists($taskFilePath)) return false;
 
@@ -145,7 +146,7 @@ final class TaskManager extends AbstractTaskManager
 
     public function deleteLogFile(): void
     {
-        $logFilePath = $_ENV['TASKS_PATH'] . '/' . '.log';
+        $logFilePath = $_ENV['TASK_MANAGER']['TASKS_PATH'] . '/' . '.log';
         if (file_exists($logFilePath)) unlink($logFilePath);
     }
 }

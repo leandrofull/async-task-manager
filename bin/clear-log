@@ -1,10 +1,9 @@
 <?php
 
 set_time_limit(0);
-
 require_once $_composer_autoload_path ?? __DIR__ . '/../vendor/autoload.php';
-
-$taskManager = (require __DIR__ . '/../config/task_manager.php')::getInstance();
+$configFile = require __DIR__ . '/../config.php';
+$taskManager = new ($configFile['TASK_MANAGER']);
 
 echo 'Running...' . PHP_EOL;
 

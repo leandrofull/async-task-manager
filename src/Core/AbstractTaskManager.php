@@ -8,21 +8,16 @@ abstract class AbstractTaskManager
 {
     private static self $instance;
 
-    private final function __construct()
-    {
-        if (!isset($_ENV['TASKS_PATH'])) {
-            $_ENV['TASKS_PATH'] = require __DIR__ . '/../../config/tasks_path.php';
-            $_ENV['ON_TASK_ACTION_EXECUTE'] = require __DIR__ . '/../../config/on_task_action_execute.php';
-            $_ENV['ON_TASK_FINISH'] = require __DIR__ . '/../../config/on_task_finish.php';
-        }
-    }
+    private final function __construct() {}
 
     protected final function __clone() {}
 
     public final static function getInstance(): static
     {
-        if (!isset(self::$instance))
-            self::$instance = new (require __DIR__ . '/../../config/task_manager.php');
+        if (!isset(self::$instance)) {
+            $_ENV['TASK_MANAGER'] = require __DIR__ . '/../../config.php';
+            self::$instance = new ($_ENV['TASK_MANAGER']['TASK_MANAGER']);
+        }
         
         return self::$instance;
     }
@@ -32,10 +27,4 @@ abstract class AbstractTaskManager
     abstract public function createTask(Task $task): void;
 
     abstract public function removeTask(Task $task): void;
-
-    abstract public function removeAllTasks(): void;
-
-    abstract public function runTasks(): void;
-
-    abstract public function getTaskById(string $id): Task|false;
 }

@@ -3,7 +3,6 @@
 namespace LeandroFull\AsyncTaskManager\Models;
 
 use LeandroFull\AsyncTaskManager\Core\AbstractTaskManager;
-use LeandroFull\AsyncTaskManager\Exceptions\TaskException;
 
 class Task
 {
@@ -23,10 +22,10 @@ class Task
         $this->priority = $priority;
 
         if (empty($this->name))
-            throw new TaskException('The task name cannot be empty');
+            throw new \InvalidArgumentException('The task name cannot be empty');
         
         if ($priority < 1 || $priority > 10)
-            throw new TaskException("Invalid priority level!");
+            throw new \InvalidArgumentException("Invalid priority level!");
 
         if (!isset(self::$taskManager))
             self::$taskManager = AbstractTaskManager::getInstance();

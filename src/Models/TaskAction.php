@@ -2,8 +2,6 @@
 
 namespace LeandroFull\AsyncTaskManager\Models;
 
-use LeandroFull\AsyncTaskManager\Exceptions\TaskActionException;
-
 class TaskAction
 {
     private object $object;
@@ -27,7 +25,7 @@ class TaskAction
         $this->args = $args;
 
         if (!method_exists($object, $this->method)) {
-            throw new TaskActionException(
+            throw new \InvalidArgumentException(
                 'The method "'.$this->method.'" does not exist in "'.$this->object::class.'"'
             );
         }
