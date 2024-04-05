@@ -1,12 +1,8 @@
 <?php
 
-set_time_limit(0);
-require_once $_composer_autoload_path ?? __DIR__ . '/../vendor/autoload.php';
-$configFile = require __DIR__ . '/../config.php';
-$taskManager = new ($configFile['TASK_MANAGER']);
+require_once 'bootstrap.php';
 
-echo 'Running...' . PHP_EOL;
-
+/** @var LeandroFull\AsyncTaskManager\Core\TaskManager $taskManager */
 $taskManager->deleteLogFile();
 
 echo 'Finished';

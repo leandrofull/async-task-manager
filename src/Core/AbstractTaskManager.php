@@ -10,7 +10,7 @@ abstract class AbstractTaskManager
 
     private final function __construct() {}
 
-    protected final function __clone() {}
+    private function __clone() {}
 
     public final static function getInstance(): static
     {
@@ -27,4 +27,10 @@ abstract class AbstractTaskManager
     abstract public function createTask(Task $task): void;
 
     abstract public function removeTask(Task $task): void;
+
+    abstract public function removeAllTasks(): void;
+
+    abstract public function runTasks(): void;
+
+    abstract public function getTaskById(string $id): Task|false;
 }
